@@ -1,0 +1,108 @@
+<template>
+  <form class="form" @submit.prevent = "getResult">
+  <input class="ipInput" v-model="ip" type="text" />
+
+  <select class="maskSelect" v-model="mask">
+    <option
+    v-for = "subnetMask in subnetMasks"
+    :key = "subnetMask"
+    :value = "subnetMask"
+    >
+      {{ subnetMask }}
+    </option>
+  </select>
+  <button :disabled="!isIpAndMaskValid" type="submit">Расчитать</button>
+  </form>
+
+  <div class="result" v-if="isShowResult && isIpAndMaskValid">
+    <div>Address: {{ip}}</div>
+    <div>Mask: {{mask}}</div>
+    <div>Subnet address: {{address}}</div>
+    <div>Address count: {{count}}</div>
+  </div>
+  <div v-if="isShowResult && !isIpAndMaskValid">Try again</div>
+</template>
+
+
+<script setup lang="ts">
+import { ref, computed } from 'vue'
+//import { UiButton } from 'is'
+
+const ip = ref('')
+const mask = ref('')
+
+
+
+const subnetMasks = ["0.0.0.0", "128.0.0.0", "192.0.0.0", "224.0.0.0", "240.0.0.0", "248.0.0.0", "252.0.0.0", "254.0.0.0", "255.0.0.0", "255.128.0.0", "255.192.0.0", "255.224.0.0", "255.240.0.0", "255.248.0.0", "255.252.0.0", "255.254.0.0", "255.255.0.0", "255.255.128.0", "255.255.192.0", "255.255.224.0", "255.255.240.0", "255.255.248.0", "255.255.252.0", "255.255.254.0", "255.255.255.0", "255.255.255.128", "255.255.255.192", "255.255.255.224", "255.255.255.240", "255.255.255.248", "255.255.255.252", "255.255.255.254", "255.255.255.255"];
+
+const isShowResult = ref(false)
+
+function isIpValid(ip: string): boolean {
+  return (
+    /^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/.test(ip) &&
+    ip.split('.').every((octet) => Number(octet) <= 255)
+  );
+};
+
+const isIpAndMaskValid = computed(() => {
+  return isIpValid(ip.value) && mask.value
+});
+
+const address = computed(() => {
+  return getNetworkAdress(ip.value, mask.value);
+});
+
+const count = computed(() => {
+  return getAddressesCount (mask.value);
+});
+
+function getNetworkAdress(ip: string, mask: string): string {
+    const ipOctets = ip.split('.');
+    const maskOctets = mask.split('.');
+    const result = [];
+
+    for (let i = 0; i < 4; i++) {
+        result.push(Number(ipOctets[i]) & Number(maskOctets[i]));
+    }
+
+    return `${result[0]}.${result[1]}.${result[2]}.${result[3]}`;
+}
+
+function getAddressesCount(mask: string): number {
+  let binaryMask = '';
+
+  for (const octet of mask.split('.')) {
+    binaryMask += Number(octet).toString(2).padStart(8, '0');
+  }
+  const zeros = 32 - binaryMask.replaceAll('0', '').length;
+
+  if (zeros === 0) return 1;
+  if (zeros === 1) return 2;
+
+  return Math.pow(2, zeros) - 2;
+}
+
+function getResult(){
+  isShowResult.value = true
+}
+</script>
+
+<style>
+.form{
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 40px;
+}
+.ipInput, .maskSelect{
+  width: 120px;
+}
+
+.result{
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 32px;
+  background-color: cadetblue;
+}
+</style>
