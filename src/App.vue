@@ -1,49 +1,41 @@
 <template>
   <div class="app-container">
-    <div class="card">
-      <!-- Форма занимает верхнюю 1/5 -->
-      <form class="form" @submit.prevent="getResult">
-        <input class="ipInput" v-model="ip" type="text" placeholder="192.168.0.1" />
-        <select class="maskSelect" v-model="mask">
-          <option value="" disabled>Выберите маску</option>
-          <option
-            v-for="subnetMask in subnetMasks"
-            :key="subnetMask"
-            :value="subnetMask"
-          >
-            {{ subnetMask }}
-          </option>
-        </select>
-        
-      </form>
-
-      <!-- Результат слева, занимает ~1/3 ширины -->
-      <div class="result-section">
-        <div v-if="isIpAndMaskValid" class="result-content">
-          <div>Address: {{ ip }}</div>
-          <div>Mask: {{ mask }}</div>
-          <div>Subnet address: {{ address }}</div>
-          <div>Address count: {{ count }}</div>
+    <form class="form" @submit.prevent="getResult">
+      <div class="result-and-input-row">
+        <div class="input-column">
+          <UiInput class="ipInput" v-model="ip" placeholder="192.168.0.1" @input="onInputChange" />
+          <UiSelect class="maskSelect" v-model="mask" :options="subnetMasks" placeholder="Mask change..." />
         </div>
-        <div v-else class="result-blank">Enter data</div>
+        
+        <div class="result-section">
+          <div v-if="isIpAndMaskValid && isShowResult" class="result-content">
+            <div>Address: {{ ip }}</div>
+            <div>Mask: {{ mask }}</div>
+            <div>Subnet address: {{ address }}</div>
+            <div>Address count: {{ count }}</div>
+          </div>
+          <div v-else class="result-blank">Enter IPv4 data</div>
+        </div>
       </div>
-      <button
-          :disabled="!isIpAndMaskValid"
-          type="submit"
-          class="btn-calculate"
-        >
-          Рассчитать
-        </button>
-        <button type="button" @click="resetForm" class="btn-reset">
-          Сбросить
-        </button>
-    </div>
+      <div class="btn-row">
+        <UiButton :disabled="!isIpAndMaskValid" type="submit" layout="primary" 
+          @click.prevent="getResult" class="btn-calculate" >
+            Рассчитать
+        </UiButton>
+          <UiButton type="button" layout="secondary" @click="resetForm" class="btn-reset" >
+            Сбросить
+          </UiButton>
+      </div>
+    </form>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { isIpValid, getNetworkAddress, getAddressesCount } from '@/utils/subnetUtils'
+import UiInput from './components/UiInput.vue'
+import UiSelect from './components/UiSelect.vue'
+import UiButton from './components/UiButton.vue'
 
 const ip = ref('')
 const mask = ref('')
@@ -69,86 +61,109 @@ const count = computed(() => getAddressesCount(mask.value))
 function getResult() {
   isShowResult.value = true
 }
+function onInputChange() {
+  isShowResult.value = false
+}
 
 function resetForm() {
   ip.value = ''
   mask.value = ''
-  isShowResult.value = false
 }
 </script>
 
-<style>
-/* Обертка для центрирования */
+<style scooped>
+:root{
+    --color-primary: #1a77a3;
+    --color-primary-dark: #288d9a;
+    --color-primary-light: #74c6d1;
+    --color-white: #ffffff;
+    --color-gray-light: #e3e3e3;
+    --color-gray: #b2b2b2;
+    --color-gray-dark: #777777;
+    --color-gray-darker: #242424;
+    --color-black: #000000;
+}
+
 .app-container {
   display: flex;
   justify-content: center;
-  padding: 20px;
 }
 
-/* Подложка: прямоугольник с padding: 7px */
-.card {
-  width: 800px;
-  height: 500px;
-  padding: 7px;
-  background-color: #f9f9f9;
-  border: 1px solid #ddd;
+.form {
+  width: 500px;
+  height: 300px;
+  padding: 45px;
+  background-color: var(--color-gray-darker);
+  border: 5px solid var(--color-gray-light);
   border-radius: 15px;
-  position: relative;
+}
+
+.result-and-input-row{
+  display: flex;
+  flex-direction: row-reverse;
+  gap: 79px;
+}
+
+.input-column{
   display: flex;
   flex-direction: column;
+  gap: 30px;
 }
 
-/* Форма — верхняя 1/5 */
-.form {
-  height: 20%; /* 1/5 от общей высоты */
+.ipInput{
   display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 0 10px;
-  position: relative;
+  flex-direction: column;
+  font-size: 20px;
 }
 
-.ipInput,
 .maskSelect {
-  color: blue;
+  display: flex;
+  flex-direction: column;
+  font-size: 20px;
 }
 
-/* Кнопки — абсолютно спозиционированы внизу формы */
-.btn-calculate,
+.result-section {
+  width: 220px;
+  height: 220px;
+  text-align: left;
+  background-color: var(--color-primary-dark);
+  padding: 12px;
+  border-radius: 4px;
+  color: var(--color-white);
+  font-family: monospace;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+.result-blank{
+  text-align: center;
+  padding: 95px 0;
+}
+.result-content{
+  padding: 10px;
+}
+
+.btn-row{
+  padding: 30px 0px;
+  display: flex;
+  flex-direction: row-reverse;
+  gap: 266px;
+  
+}
 .btn-calculate {
-  position: absolute;
-  right: 10px;
-  bottom: 10px;
+  font-size: 18px;
+  display: flex;
+  flex-direction: row;
 }
 
 .btn-reset {
-  position: absolute;
-  left: 10px;
-  bottom: 10px;
+  font-size: 18px;
+  display: flex;
+  flex-direction: row;
 }
 
 .btn-calculate:disabled {
   cursor: not-allowed;
 }
 
-/* Результат — левая треть подложки */
-.result-section {
-  flex: 1;
-  display: flex;
-  align-items: flex-start;
-  justify-content: flex-start;
-  padding: 16px;
-}
-
-.result-content,
-.result-blank {
-  width: calc(100% / 3); /* ~33.3% */
-  background-color: cadetblue;
-  padding: 12px;
-  border-radius: 4px;
-  color: white;
-  font-family: monospace;
-  font-size: 14px;
-  line-height: 1.4;
-}
 </style>

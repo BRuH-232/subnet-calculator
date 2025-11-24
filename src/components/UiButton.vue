@@ -29,33 +29,33 @@ const props = withDefaults(defineProps<IProps>(), {
 <style scooped>
 .ui-button {
   padding: 6px 12px;
-  border-radius: 4px;
+  border-radius: 7px;
   cursor: pointer;
   font-size: 14px;
 }
 
 .ui-button--primary {
-  border: 1px solid #007bff;
-  color: white;
-  background-color: #1978de;
+  border: 3px solid var(--color-primary-light);
+  color: var(--color-white);
+  background-color: var(--color-primary);
 }
 
 .ui-button--secondary {
   background-color: transparent;
-  border: 1px solid gray;
-  color: white;
+  border: 3px solid var(--color-gray-dark);
+  color: var(--color-white);
 }
 
 .ui-button--primary:hover:not(:disabled),
 .ui-button--secondary:hover:not(:disabled) {
-  filter: brightness(0.9);
+  filter: brightness(0.7);
 }
 
 .ui-button:disabled,
 .ui-button--disabled {
-  background-color: #ccc;
-  border-color: #aaa;
-  color: #666;
+  background-color: var(--color-gray-light);
+  border-color: var(--color-primary-dark);
+  color: var(--color-primary-dark);
   cursor: not-allowed;
 }
 </style>

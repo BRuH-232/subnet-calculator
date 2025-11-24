@@ -4,7 +4,6 @@
     :value="props.modelValue"
     @input="onInput"
     :placeholder="props.placeholder"
-    :disabled="props.disabled"
     :type="props.type"
   />
 </template>
@@ -33,12 +32,7 @@ const onInput = (event: Event) => {
 .ui-input {
   width: 150px;
   padding: 6px 8px;
-  border: 1px solid #ccc;
+  border: 3px solid var(--color-gray);
   border-radius: 4px;
-  font-size: 14px;
-}
-.ui-input:disabled {
-  background-color: #f5f5f5;
-  color: #888;
 }
 </style>

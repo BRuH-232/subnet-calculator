@@ -3,7 +3,6 @@
     class="ui-select"
     :value="props.modelValue"
     @change="onChange"
-    :disabled="props.disabled"
   >
     <option value="" disabled>{{ props.placeholder }}</option>
     <option
@@ -25,7 +24,6 @@ const props = defineProps<{
   modelValue: string | number
   options: Option[]
   placeholder?: string
-  disabled?: boolean
 }>()
 
 const emit = defineEmits<{
@@ -44,15 +42,11 @@ const getOptionKey = (option: Option): string => {
 
 <style scoped>
 .ui-select {
-  width: 150px;
+  width: 170px;
   padding: 6px 8px;
-  border: 1px solid #ccc;
+  border: 3px solid var(--color-gray-dark);
   border-radius: 4px;
-  font-size: 14px;
-  background-color: gray;
-}
-.ui-select:disabled {
-  background-color: #f5f5f5;
-  color: #888;
+  color:var(--color-black);
+  background-color: var(--color-gray-light);
 }
 </style>
