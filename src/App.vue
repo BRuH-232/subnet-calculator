@@ -3,7 +3,9 @@
     <form class="form" @submit.prevent="getResult">
       <div class="result-and-input-row">
         <div class="input-column">
-          <UiInput class="ipInput" v-model="ip" placeholder="192.168.0.1" @input="onInputChange" />
+          <UiField label="Ip Address">
+            <UiInput class="ipInput" v-model="ip" placeholder="192.168.0.1" @input="onInputChange" />
+          </UiField>
           <UiSelect class="maskSelect" v-model="mask" :options="subnetMasks" placeholder="Mask change..." />
         </div>
         
@@ -36,6 +38,7 @@ import { isIpValid, getNetworkAddress, getAddressesCount } from '@/utils/subnetU
 import UiInput from './components/UiInput.vue'
 import UiSelect from './components/UiSelect.vue'
 import UiButton from './components/UiButton.vue'
+import UiField from './components/UiField.vue'
 
 const ip = ref('')
 const mask = ref('')

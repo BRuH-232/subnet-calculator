@@ -7,10 +7,12 @@
 </script>
 
 <template>
-    <div class="text-field">
-        {{ props.label }}
+    <div>
+        <label class="text-field">
+            {{ props.label }}
+        </label>
+        <slot />
     </div>
-    <slot />
 </template>
 
 <style>
